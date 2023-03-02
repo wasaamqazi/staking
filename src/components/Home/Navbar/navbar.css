@@ -1,0 +1,41 @@
+.navbar {
+  padding: 15px 0px;
+}
+
+.navbar .navbar-brand {
+  color: white !important;
+  font-family: "Mulish", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.navbar .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .show > .nav-link {
+  color: white !important;
+  font-family: "Mulish", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.navbar .btn-outline-success {
+  color: white !important;
+  border-color: white !important;
+  font-family: "Mulish", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+}
+.navbar .btn-outline-success:hover {
+  background-color: white;
+  color: #212529 !important;
+  border-color: #212529 !important;
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url("../../../assets/menu-hamburger.svg");
+}
+
+.navbar-toggler:focus {
+  text-decoration: none;
+  outline: 0;
+  box-shadow: none;
+}

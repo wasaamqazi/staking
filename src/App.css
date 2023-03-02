@@ -1,0 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;900&family=Rajdhani:wght@400;700&display=swap");
+
+body {
+  background-color: #46464641;
+}
+
+.btn:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
