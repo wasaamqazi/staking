@@ -8,3 +8,43 @@ body {
   box-shadow: none !important;
   outline: none !important;
 }
+.shiny {
+  color: white;
+  position: relative;
+  border: none;
+  padding: 10px 15px;
+  background: #3984ff;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.shiny::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--y, 0) * 1px - 50px);
+  left: calc(var(--x, 0) * 1px - 50px);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(#ffec9d, #3984ff00 80%);
+
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.shiny:hover::after {
+  opacity: 0.4;
+}
+h6.balance {
+  background: black;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+h6.allownace {
+  background: black;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
