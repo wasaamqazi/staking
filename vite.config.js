@@ -7,4 +7,7 @@ export default defineConfig({
   server: {
     host: true,
   },
+  define: {
+    global: "globalThis",
+  },
 });
