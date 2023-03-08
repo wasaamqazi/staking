@@ -14,6 +14,12 @@ import { publicProvider } from "wagmi/providers/public";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import { mainnet, polygon, bscTestnet, bsc } from "wagmi/chains";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import {
+  EthereumClient,
+  modalConnectors,
+  walletConnectProvider,
+} from "@web3modal/ethereum";
+import { Web3Modal } from "@web3modal/react";
 
 
 const { chains, provider } = configureChains(

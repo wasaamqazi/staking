@@ -24,7 +24,8 @@
     "react-toastify": "^9.1.1",
     "wagmi": "^0.11.7",
     "web3": "^1.8.2",
-    "yarn": "^1.22.19"
+    "yarn": "^1.22.19",
+    "@rollup/plugin-inject": "^4.0.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
