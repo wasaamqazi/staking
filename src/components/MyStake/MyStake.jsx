@@ -2,15 +2,14 @@ import React, { useEffect, useState } from "react";
 import "./mystake.css";
 import { useAccount, useSigner } from "wagmi";
 import Web3 from "web3/dist/web3.min.js";
-import erc20abi from "../../abis/ERC20.json"
-import stakingabi from "../../abis/staking.json"
+import erc20abi from "../../abis/ERC20.json";
+import stakingabi from "../../abis/staking.json";
 import { toast } from "react-toastify";
 import moment from "moment/moment";
-import Countdown from 'react-countdown';
+import Countdown from "react-countdown";
 
 const erc20_contract_address = import.meta.env.VITE_ERC20;
 const staking_contract_address = import.meta.env.VITE_STAKING;
-
 
 const MyStake = () => {
   const { data: signer } = useSigner();
@@ -19,8 +18,6 @@ const MyStake = () => {
   const [StakerDetails, setStakerDetails] = useState({});
   const [NewDate, setNewDate] = useState("");
 
-
-
   const getStakeDetails = async () => {
     if (provider) {
       const web3 = new Web3(provider);
@@ -28,29 +25,30 @@ const MyStake = () => {
         stakingabi,
         staking_contract_address
       );
-      let staker = await window.contract.methods.Details(address).call()
+      let staker = await window.contract.methods.Details(address).call();
       console.log(staker.stakeTime * 1000);
-
-
 
       const date = moment(staker.stakeTime);
       console.log(date);
-      const newDate = moment(staker.stakeTime * 1000).add(staker.StakeMonth * 30, 'minutes');
+      const newDate = moment(staker.stakeTime * 1000).add(
+        staker.StakeMonth * 30,
+        "minutes"
+      );
 
-      setNewDate(newDate)
+      setNewDate(newDate);
       console.log(newDate);
       console.log(newDate.diff(date));
-      setStakerDetails(staker)
-
+      setStakerDetails(staker);
     }
-  }
+  };
   const withdraw = async () => {
     const web3 = new Web3(provider);
     window.staking_contract = new web3.eth.Contract(
       stakingabi,
       staking_contract_address
     );
-    await window.staking_contract.methods.WithdrawTokens(address)
+    await window.staking_contract.methods
+      .WithdrawTokens(address)
       .send({ from: address })
       .on("transactionHash", async (hash) => {
         for (let index = 0; index > -1; index++) {
@@ -67,10 +65,7 @@ const MyStake = () => {
         toast("Something went wrong while Approving");
         // setLoadingState1(false);
       });
-
-  }
-
-
+  };
 
   useEffect(() => {
     if (signer) {
@@ -79,12 +74,12 @@ const MyStake = () => {
   }, [signer]);
 
   useEffect(() => {
-    getStakeDetails()
-  }, [provider])
+    getStakeDetails();
+  }, [provider]);
 
   useEffect(() => {
     console.log(StakerDetails);
-  }, [StakerDetails])
+  }, [StakerDetails]);
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
       // Render a completed state
@@ -102,28 +97,39 @@ const MyStake = () => {
     }
   };
 
-
   return (
     <div className="home-content staking-home">
       <div className="home-content-btn">
-        {
-          StakerDetails.check ?
-            <>
-              <div className="allDetails">
-                <div className="left-side">Your Stake: {StakerDetails.depositTokens / 1000000000000000000}</div>
-                <div className="left-side">Your EarnPercentage: {StakerDetails.EarnPersentage}</div>
-                <div className="left-side">Your StakeMonth: {StakerDetails.StakeMonth}</div>
-                {/* <div className="left-side">Your Stake Time: {StakerDetails.stakeTime}</div> */}
-
-                {/* <div className="right-side">Claimable Amount:</div> */}
+        {StakerDetails.check ? (
+          <>
+            <div className="allDetails">
+              <div className="mobile-responsive">
+                <div className="left-side">
+                  Your Stake:{" "}
+                  {StakerDetails.depositTokens / 1000000000000000000}
+                </div>
+                <div className="left-side">
+                  Your EarnPercentage: {StakerDetails.EarnPersentage}
+                </div>
+                <div className="left-side">
+                  Your StakeMonth: {StakerDetails.StakeMonth}
+                </div>
               </div>
-              <Countdown date={NewDate} renderer={renderer} />
-              <button onClick={withdraw} className="btn btn-lg ">
-                claim reward
-              </button>
-            </> : <>Not Staked</>
-        }
+              {/* <div className="left-side">Your Stake Time: {StakerDetails.stakeTime}</div> */}
 
+              {/* <div className="right-side">Claimable Amount:</div> */}
+            </div>
+            <div className="timer">
+              <Countdown date={NewDate} renderer={renderer} />
+            </div>
+
+            <button onClick={withdraw} className="btn btn-lg ">
+              claim reward
+            </button>
+          </>
+        ) : (
+          <>Not Staked</>
+        )}
       </div>
     </div>
   );

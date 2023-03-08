@@ -1,9 +1,8 @@
 .staking-home .home-content-btn {
   display: flex;
   flex-direction: column !important;
- 
 }
-.allDetails{
+.allDetails {
   gap: 20px;
   flex-wrap: wrap;
 }
@@ -16,7 +15,6 @@
   font-weight: 700;
   font-size: 22px;
 }
-
 
 .staking-home .home-content-btn .btn {
   padding: 10px;
@@ -37,11 +35,29 @@
   color: #212529;
 }
 
+.mobile-responsive .left-side {
+  /* background-color: red; */
+  margin: 20px;
+}
+
+.timer div {
+  padding: 6px;
+}
+
+.timer div div {
+  color: white;
+  background-color: #212529;
+  border-radius: 3px;
+  margin: 8px;
+  padding: 8px;
+  text-align: center;
+  font-size: 18px !important;
+}
+
 @media screen and (max-width: 769px) {
   .staking-home .home-content-btn {
     display: flex;
     flex-direction: column !important;
-   
   }
 }
 
@@ -49,7 +65,6 @@
   .staking-home .home-content-btn {
     display: flex;
     flex-direction: column !important;
-   
   }
   .staking-home .home-content-btn div {
     display: flex;
@@ -58,11 +73,50 @@
     font-weight: 700;
     font-size: 16px;
   }
+  .allDetails {
+    margin: auto;
+  }
+  .mobile-responsive {
+    /* background-color: red; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+  }
+
+  .staking-home .home-content-btn .btn {
+    padding: 7px;
+    text-transform: capitalize;
+    width: 60%;
+    margin: auto;
+    font-family: "Mulish", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 20px;
+    color: white;
+    background-color: #212529;
+  }
+
+  .timer {
+    /* background-color: red; */
+  }
+
+  .timer div {
+    padding: 6px;
+  }
+
+  .timer div div {
+    color: white;
+    background-color: #212529;
+    border-radius: 3px;
+    margin: 3px;
+    font-size: 16px !important;
+  }
 }
 
 @media screen and (max-width: 376px) {
   .staking-home .home-content-btn .btn {
-   
     font-size: 16px;
     margin-top: 20px;
   }
