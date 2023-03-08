@@ -35,7 +35,7 @@ const MyStake = () => {
 
       const date = moment(staker.stakeTime);
       console.log(date);
-      const newDate = moment(staker.stakeTime * 1000).add(staker.StakeMonth * 30, 'days');
+      const newDate = moment(staker.stakeTime * 1000).add(staker.StakeMonth * 30, 'minutes');
 
       setNewDate(newDate)
       console.log(newDate);
@@ -113,7 +113,7 @@ const MyStake = () => {
                 <div className="left-side">Your Stake: {StakerDetails.depositTokens / 1000000000000000000}</div>
                 <div className="left-side">Your EarnPercentage: {StakerDetails.EarnPersentage}</div>
                 <div className="left-side">Your StakeMonth: {StakerDetails.StakeMonth}</div>
-                <div className="left-side">Your Stake Time: {StakerDetails.stakeTime}</div>
+                {/* <div className="left-side">Your Stake Time: {StakerDetails.stakeTime}</div> */}
 
                 {/* <div className="right-side">Claimable Amount:</div> */}
               </div>

@@ -133,3 +133,10 @@
     width: 80%;
   }
 }
+
+p.alreadyStakedNotice {
+  font-size: 19px;
+  font-weight: 700;
+  color: #931010;
+  margin-top: 13px;
+}
