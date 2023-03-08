@@ -9,6 +9,5 @@ export default defineConfig({
   },
   define: {
     global: "globalThis",
-    buffer: "this buffer"
   },
 });
