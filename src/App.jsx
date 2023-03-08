@@ -35,7 +35,7 @@ const wagmiClient = createClient({
   provider,
 });
 
-
+const myBuffer = Buffer.from('Hello, world!', 'utf8');
 function App() {
   return (
     <div>
