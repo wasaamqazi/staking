@@ -26,6 +26,7 @@ const Home = () => {
   const [stakeLoading, setStakeLoading] = useState(false);
 
   const getStakeDetails = async () => {
+    setLoadingState(true);
     if (provider) {
       const web3 = new Web3(provider);
       window.contract = new web3.eth.Contract(
@@ -35,11 +36,12 @@ const Home = () => {
       let staker = await window.contract.methods.Details(address).call();
       // console.log(staker);
       setStakerDetails(staker);
+      setLoadingState(false);
     }
   };
   const getCurrentBalance = async () => {
+    setLoadingState(true);
     if (provider) {
-      setLoadingState(true);
       const web3 = new Web3(provider);
       window.mint_contract = new web3.eth.Contract(
         erc20abi,
@@ -117,18 +119,13 @@ const Home = () => {
   };
 
   const getMonthsAndPercentage = async () => {
-    console.log("hey");
     setLoadingState(true);
-    console.log("loading is true");
-
     // const web3 = new Web3(provider);
     const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
-
     window.staking_contract = new web3.eth.Contract(
       stakingabi,
       staking_contract_address
     );
-
     var months = [];
     for (let i = 1; i < 4; i++) {
       let monthsSingle = await window.staking_contract.methods.APY(i).call();
@@ -138,7 +135,6 @@ const Home = () => {
       percentSingle = percentSingle / 10;
       months.push({ monthsSingle, percentSingle });
     }
-
     setContractMonths(months);
     setLoadingState(false);
     console.log("loading is false");

@@ -22,8 +22,8 @@ const MyStake = () => {
   const [claimLoading, setClaimLoading] = useState(false);
 
   const getStakeDetails = async () => {
-    setisLoading(true);
     if (provider) {
+      setisLoading(true);
       const web3 = new Web3(provider);
       window.contract = new web3.eth.Contract(
         stakingabi,
@@ -33,7 +33,7 @@ const MyStake = () => {
       console.log(staker.stakeTime * 1000);
 
       const date = moment(staker.stakeTime);
-      console.log(date);
+
       const newDate = moment(staker.stakeTime * 1000).add(
         staker.StakeMonth * 30,
         "minutes"
