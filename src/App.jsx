@@ -21,7 +21,6 @@ import {
 } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/react";
 
-
 const { chains, provider } = configureChains(
   [bscTestnet],
   [
@@ -41,13 +40,11 @@ const wagmiClient = createClient({
   provider,
 });
 
-
 function App() {
   return (
-    <div>
+    <div className="App-js">
       <ToastContainer />
       <WagmiConfig client={wagmiClient}>
-
         <RainbowKitProvider chains={chains}>
           <Navbar />
 

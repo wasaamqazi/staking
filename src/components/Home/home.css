@@ -25,8 +25,7 @@
   justify-content: space-around;
 }
 
-.home-content .radio-btn form {
-}
+
 
 .home-content .radio-btn label {
   font-family: "Mulish", sans-serif;
@@ -137,6 +136,21 @@
 p.alreadyStakedNotice {
   font-size: 19px;
   font-weight: 700;
-  color: #931010;
+  color: #481093;
   margin-top: 13px;
+}
+.input-fields .EarningAmount button.btn.btn-primary {
+  border: 1px solid #000;
+}
+html,body,div#root,.App-js{
+height: 100%;
+}
+.home-wrapper {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+label.disabled {
+  color: #9b9b9b;
 }

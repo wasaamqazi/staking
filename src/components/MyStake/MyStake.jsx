@@ -7,6 +7,7 @@ import stakingabi from "../../abis/staking.json";
 import { toast } from "react-toastify";
 import moment from "moment/moment";
 import Countdown from "react-countdown";
+import Spinner from "react-bootstrap/Spinner";
 
 const erc20_contract_address = import.meta.env.VITE_ERC20;
 const staking_contract_address = import.meta.env.VITE_STAKING;
@@ -17,8 +18,11 @@ const MyStake = () => {
   const [provider, setProvider] = useState("");
   const [StakerDetails, setStakerDetails] = useState({});
   const [NewDate, setNewDate] = useState("");
+  const [isLoading, setisLoading] = useState(false);
+  const [claimLoading, setClaimLoading] = useState(false);
 
   const getStakeDetails = async () => {
+    setisLoading(true);
     if (provider) {
       const web3 = new Web3(provider);
       window.contract = new web3.eth.Contract(
@@ -39,9 +43,11 @@ const MyStake = () => {
       console.log(newDate);
       console.log(newDate.diff(date));
       setStakerDetails(staker);
+      setisLoading(false);
     }
   };
   const withdraw = async () => {
+    setClaimLoading(true);
     const web3 = new Web3(provider);
     window.staking_contract = new web3.eth.Contract(
       stakingabi,
@@ -55,7 +61,7 @@ const MyStake = () => {
           var receipt = await web3.eth.getTransactionReceipt(hash);
           if (receipt != null) {
             window.location.reload(false);
-            // setLoadingState1(false)
+            setClaimLoading(false);
             break;
           }
           console.log("hello");
@@ -63,7 +69,7 @@ const MyStake = () => {
       })
       .on("error", (error) => {
         toast("Something went wrong while Approving");
-        // setLoadingState1(false);
+        setClaimLoading(false);
       });
   };
 
@@ -99,38 +105,57 @@ const MyStake = () => {
 
   return (
     <div className="home-content staking-home">
-      <div className="home-content-btn">
-        {StakerDetails.check ? (
-          <>
-            <div className="allDetails">
-              <div className="mobile-responsive">
-                <div className="left-side">
-                  Your Stake:{" "}
-                  {StakerDetails.depositTokens / 1000000000000000000}
+      {isLoading ? (
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      ) : (
+        <div className="home-content-btn">
+          {StakerDetails.check ? (
+            <>
+              <div className="allDetails">
+                <div className="mobile-responsive">
+                  <div className="left-side">
+                    Your Stake:{" "}
+                    {StakerDetails.depositTokens / 1000000000000000000}
+                  </div>
+                  <div className="left-side">
+                    Your EarnPercentage: {StakerDetails.EarnPersentage}
+                  </div>
+                  <div className="left-side">
+                    Your StakeMonth: {StakerDetails.StakeMonth}
+                  </div>
+                  <div className="left-side">
+                    Your Stake Date and Time:{" "}
+                    {moment(StakerDetails.stakeTime * 1000).format(
+                      "YYYY-MM-DD HH:mm:ss"
+                    )}
+                  </div>
                 </div>
-                <div className="left-side">
-                  Your EarnPercentage: {StakerDetails.EarnPersentage}
-                </div>
-                <div className="left-side">
-                  Your StakeMonth: {StakerDetails.StakeMonth}
-                </div>
+                {/* <div className="left-side">Your Stake Time: {StakerDetails.stakeTime}</div> */}
+
+                {/* <div className="right-side">Claimable Amount:</div> */}
               </div>
-              {/* <div className="left-side">Your Stake Time: {StakerDetails.stakeTime}</div> */}
-
-              {/* <div className="right-side">Claimable Amount:</div> */}
-            </div>
-            <div className="timer">
-              <Countdown date={NewDate} renderer={renderer} />
-            </div>
-
-            <button onClick={withdraw} className="btn btn-lg ">
-              claim reward
-            </button>
-          </>
-        ) : (
-          <>Not Staked</>
-        )}
-      </div>
+              <div className="timer">
+                <Countdown date={NewDate} renderer={renderer} />
+              </div>
+              {claimLoading ? (
+                <div className="text-center">
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              ) : (
+                <button onClick={withdraw} className="btn btn-lg ">
+                  claim reward
+                </button>
+              )}
+            </>
+          ) : (
+            <>Not Staked</>
+          )}
+        </div>
+      )}
     </div>
   );
 };
