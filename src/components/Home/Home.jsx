@@ -82,6 +82,10 @@ const Home = () => {
       toast("please select Percentage you want to keep");
       error = true;
     }
+    if (address == "" || address == undefined || address == null) {
+      toast("Please Connect Wallet First", { toastId: "pleaseconnectwallet" });
+      error = true;
+    }
 
     return error;
   };
@@ -95,6 +99,7 @@ const Home = () => {
     console.log(amount);
     console.log(months);
     console.log(amountKeepPercent);
+
     if (validation() == false) {
       setStakeLoading(true);
       await window.staking_contract.methods
