@@ -21,7 +21,7 @@
             },
             {
                 "internalType": "uint256",
-                "name": "_amount",
+                "name": "_payment",
                 "type": "uint256"
             },
             {
@@ -252,6 +252,24 @@
                 "internalType": "address",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getTaxPenalty",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "tax",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "pen",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
