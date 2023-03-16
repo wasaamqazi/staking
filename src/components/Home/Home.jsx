@@ -24,6 +24,7 @@ const Home = () => {
   const [loadingState, setLoadingState] = useState(false);
   const [approveloading, setapproveloading] = useState(false);
   const [stakeLoading, setStakeLoading] = useState(false);
+  const [currentReward, setCurrentReward] = useState("");
 
   const getStakeDetails = async () => {
     setLoadingState(true);
@@ -117,6 +118,7 @@ const Home = () => {
           }
         })
         .on("error", (error) => {
+          console.log(error)
           toast("Something went wrong while Approving");
           setStakeLoading(false);
         });
@@ -174,6 +176,23 @@ const Home = () => {
         });
     }
   };
+  const getCurrentReward = async () => {
+    setLoadingState(true);
+    // const web3 = new Web3(provider);
+    const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+    window.staking_contract = new web3.eth.Contract(
+      stakingabi,
+      staking_contract_address
+    );
+
+    let currentReward = await window.staking_contract.methods.viewRewards(address).call();
+
+
+    setCurrentReward(currentReward)
+    setLoadingState(false);
+    console.log("loading is false");
+  };
+
 
   useEffect(() => {
     if (signer) {
@@ -188,7 +207,9 @@ const Home = () => {
     getCurrentBalance();
     getMonthsAndPercentage();
   }, [provider]);
-
+  useEffect(() => {
+    getCurrentReward();
+  }, [provider]);
   useEffect(() => {
     console.log(ContractMonths);
   }, [ContractMonths]);
@@ -216,8 +237,8 @@ const Home = () => {
               (allowance / 1000000000000000000).toFixed(2) +
               " MTK"}
           </h6>
-          {balance == allowance ? (
-            <></>
+          {/* {balance == allowance ? (
+            <> </>
           ) : approveloading ? (
             <>
               <Spinner animation="border" role="status">
@@ -228,7 +249,7 @@ const Home = () => {
             <button className="btn btn-primary" onClick={approve}>
               Approve
             </button>
-          )}
+          )} */}
           {StakerDetails.check ? (
             <>
               <p className="alreadyStakedNotice">
@@ -253,7 +274,7 @@ const Home = () => {
                 // when there is already staked
                 <form>
                   {ContractMonths[0]?.monthsSingle ==
-                  StakerDetails.StakeMonth ? (
+                    StakerDetails.StakeMonth ? (
                     <div className="form-check">
                       <label className="form-check-label">
                         <input
@@ -290,7 +311,7 @@ const Home = () => {
                     </div>
                   )}
                   {ContractMonths[1]?.monthsSingle ==
-                  StakerDetails.StakeMonth ? (
+                    StakerDetails.StakeMonth ? (
                     <div className="form-check">
                       <label className="form-check-label">
                         <input
@@ -328,7 +349,7 @@ const Home = () => {
                   )}
 
                   {ContractMonths[2]?.monthsSingle ==
-                  StakerDetails.StakeMonth ? (
+                    StakerDetails.StakeMonth ? (
                     <div className="form-check">
                       <label className="form-check-label">
                         <input
@@ -606,23 +627,39 @@ const Home = () => {
                   }}
                 />
               </div>
-              {stakeLoading ? (
+              {balance == allowance ? (
+
+                stakeLoading ? (
+                  <>
+                    < Spinner animation="border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  </>
+                ) : (
+                  <button className="btn btn-primary" onClick={stakeToken}>
+                    Stake
+                  </button>
+                )
+              ) : approveloading ? (
                 <>
-                  {" "}
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </Spinner>
                 </>
               ) : (
-                <button className="btn btn-primary" onClick={stakeToken}>
-                  Stake
+                <button className="btn btn-primary" onClick={approve}>
+                  Approve
                 </button>
               )}
+
+              <h6 className="balance" style={{ marginTop: "5px" }}>
+                {"Reward: " + (currentReward / 1000000000000000000).toFixed(2) + " MTK"}
+              </h6>
             </div>
           </div>
-        </div>
+        </div >
       )}
-    </div>
+    </div >
   );
 };
 

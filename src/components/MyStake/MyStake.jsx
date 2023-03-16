@@ -20,6 +20,8 @@ const MyStake = () => {
   const [NewDate, setNewDate] = useState("");
   const [isLoading, setisLoading] = useState(false);
   const [claimLoading, setClaimLoading] = useState(false);
+  const [currentReward, setCurrentReward] = useState("");
+  const [contractCurrentBalance, setContractCurrentBalance] = useState("");
 
   const getStakeDetails = async () => {
     if (provider) {
@@ -30,7 +32,7 @@ const MyStake = () => {
         staking_contract_address
       );
       let staker = await window.contract.methods.Details(address).call();
-      console.log(staker.stakeTime * 1000);
+      // console.log(staker.stakeTime * 1000);
 
       const date = moment(staker.stakeTime);
 
@@ -40,8 +42,8 @@ const MyStake = () => {
       );
 
       setNewDate(newDate);
-      console.log(newDate);
-      console.log(newDate.diff(date));
+        console.log(newDate);
+      // console.log(newDate.diff(date));
       setStakerDetails(staker);
       setisLoading(false);
     }
@@ -64,7 +66,7 @@ const MyStake = () => {
             setClaimLoading(false);
             break;
           }
-          console.log("hello");
+
         }
       })
       .on("error", (error) => {
@@ -72,7 +74,39 @@ const MyStake = () => {
         setClaimLoading(false);
       });
   };
+  const getCurrentReward = async () => {
 
+    // const web3 = new Web3(provider);
+    const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+    window.staking_contract = new web3.eth.Contract(
+      stakingabi,
+      staking_contract_address
+    );
+
+    let currentReward = await window.staking_contract.methods.viewRewards(address).call();
+
+
+    setCurrentReward(currentReward)
+
+
+  };
+  const getContractBalance = async () => {
+
+    // const web3 = new Web3(provider);
+    const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+    window.erc20_contract = new web3.eth.Contract(
+      erc20abi,
+      erc20_contract_address
+    );
+
+    let contractCurrentBalance = await window.erc20_contract.methods.balanceOf(staking_contract_address).call();
+
+
+    console.log(contractCurrentBalance)
+    setContractCurrentBalance(contractCurrentBalance)
+
+
+  };
   useEffect(() => {
     if (signer) {
       setProvider((signer?.provider).provider);
@@ -82,9 +116,16 @@ const MyStake = () => {
   useEffect(() => {
     getStakeDetails();
   }, [provider]);
-
   useEffect(() => {
-    console.log(StakerDetails);
+    getCurrentReward();
+
+  }, [provider]);
+  useEffect(() => {
+
+    getContractBalance();
+  }, [provider]);
+  useEffect(() => {
+    // console.log(StakerDetails);
   }, [StakerDetails]);
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -139,6 +180,12 @@ const MyStake = () => {
               <div className="timer">
                 <Countdown date={NewDate} renderer={renderer} />
               </div>
+              <div className="timer">
+                <div>
+                  <div>  Rewards: {` `} {(currentReward / 1000000000000000000).toFixed(2)}   MTK  </div>
+
+                </div>
+              </div>
               {claimLoading ? (
                 <div className="text-center">
                   <Spinner animation="border" role="status">
@@ -146,9 +193,14 @@ const MyStake = () => {
                   </Spinner>
                 </div>
               ) : (
-                <button onClick={withdraw} className="btn btn-lg ">
+                contractCurrentBalance && contractCurrentBalance > 0 && contractCurrentBalance >= currentReward ? <button onClick={withdraw} className="btn btn-lg ">
                   claim reward
-                </button>
+                </button> : <div className="timer">
+                  <div>
+                    <div> Claim Reward is not available right now. Please try again later!</div>
+
+                  </div>
+                </div>
               )}
             </>
           ) : (
