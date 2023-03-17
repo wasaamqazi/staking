@@ -25,6 +25,7 @@ const MyStake = () => {
   const [contractCurrentBalance, setContractCurrentBalance] = useState(0);
   const [rewardPenalty, setRewardPenalty] = useState("");
   const [collectedReward, setCollectedReward] = useState("");
+  const [estimatedTotalReward, setEstimatedTotalReward] = useState("");
 
   const getStakeDetails = async () => {
     if (provider) {
@@ -151,6 +152,17 @@ const MyStake = () => {
     let collectedReward = await window.staking_contract.methods.RewardAmount(address).call();
     setCollectedReward(collectedReward)
   };
+  //Get Estimated Reward from staking contract
+  const getEstimatedTotalReward = async () => {
+    // const web3 = new Web3(provider);
+    const web3 = new Web3(provider);
+    window.staking_contract = new web3.eth.Contract(
+      stakingabi,
+      staking_contract_address
+    );
+    let estimatedTotalReward = await window.staking_contract.methods.InterestAmount(address).call();
+    setEstimatedTotalReward(estimatedTotalReward)
+  };
   useEffect(() => {
     if (signer) {
       setProvider((signer?.provider).provider);
@@ -181,6 +193,12 @@ const MyStake = () => {
       getCollectedReward();
     }
   }, [provider]);
+  useEffect(() => {
+    if (provider) {
+      getEstimatedTotalReward();
+    }
+  }, [provider]);
+
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
       // Render a completed state
@@ -222,6 +240,9 @@ const MyStake = () => {
                   </div>
                   <div className="left-side">
                     Reward Claimed: {` `} {(collectedReward / 1000000000000000000).toFixed(2)}   MTK
+                  </div>
+                  <div className="left-side">
+                    Total Estimated Reward: {` `} {(estimatedTotalReward / 1000000000000000000).toFixed(2)}   MTK
                   </div>
                   <div className="left-side">
                     Your Stake Date and Time:{" "}
