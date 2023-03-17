@@ -24,6 +24,7 @@ const MyStake = () => {
   const [currentReward, setCurrentReward] = useState(0);
   const [contractCurrentBalance, setContractCurrentBalance] = useState(0);
   const [rewardPenalty, setRewardPenalty] = useState("");
+  const [collectedReward, setCollectedReward] = useState("");
 
   const getStakeDetails = async () => {
     if (provider) {
@@ -139,6 +140,17 @@ const MyStake = () => {
     let rewardPenalty = await window.staking_contract.methods.getTaxPenalty().call();
     setRewardPenalty(rewardPenalty.pen)
   };
+  //Get Collected Reward from staking contract
+  const getCollectedReward = async () => {
+    // const web3 = new Web3(provider);
+    const web3 = new Web3(provider);
+    window.staking_contract = new web3.eth.Contract(
+      stakingabi,
+      staking_contract_address
+    );
+    let collectedReward = await window.staking_contract.methods.RewardAmount(address).call();
+    setCollectedReward(collectedReward)
+  };
   useEffect(() => {
     if (signer) {
       setProvider((signer?.provider).provider);
@@ -164,7 +176,11 @@ const MyStake = () => {
       getRewardPenalty();
     }
   }, [provider]);
-
+  useEffect(() => {
+    if (provider) {
+      getCollectedReward();
+    }
+  }, [provider]);
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
       // Render a completed state
@@ -205,6 +221,9 @@ const MyStake = () => {
                     Your StakeMonth: {StakerDetails.StakeMonth}
                   </div>
                   <div className="left-side">
+                    Reward Claimed: {` `} {(collectedReward / 1000000000000000000).toFixed(2)}   MTK
+                  </div>
+                  <div className="left-side">
                     Your Stake Date and Time:{" "}
                     {moment(StakerDetails.stakeTime * 1000).format(
                       "YYYY-MM-DD HH:mm:ss"
@@ -226,6 +245,7 @@ const MyStake = () => {
 
                 </div>
               </div>
+
               {claimLoading ? (
                 <div className="text-center">
                   <Spinner animation="border" role="status">
