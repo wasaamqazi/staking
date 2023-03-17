@@ -18,10 +18,12 @@ const MyStake = () => {
   const [provider, setProvider] = useState("");
   const [StakerDetails, setStakerDetails] = useState({});
   const [NewDate, setNewDate] = useState("");
+  const [countDownCompleted, setCountDownCompleted] = useState(false);
   const [isLoading, setisLoading] = useState(false);
   const [claimLoading, setClaimLoading] = useState(false);
-  const [currentReward, setCurrentReward] = useState("");
-  const [contractCurrentBalance, setContractCurrentBalance] = useState("");
+  const [currentReward, setCurrentReward] = useState(0);
+  const [contractCurrentBalance, setContractCurrentBalance] = useState(0);
+  const [rewardPenalty, setRewardPenalty] = useState("");
 
   const getStakeDetails = async () => {
     if (provider) {
@@ -42,42 +44,72 @@ const MyStake = () => {
       );
 
       setNewDate(newDate);
-        console.log(newDate);
+      console.log(newDate);
       // console.log(newDate.diff(date));
       setStakerDetails(staker);
       setisLoading(false);
     }
   };
   const withdraw = async () => {
-    setClaimLoading(true);
-    const web3 = new Web3(provider);
-    window.staking_contract = new web3.eth.Contract(
-      stakingabi,
-      staking_contract_address
-    );
-    await window.staking_contract.methods
-      .WithdrawTokens(address)
-      .send({ from: address })
-      .on("transactionHash", async (hash) => {
-        for (let index = 0; index > -1; index++) {
-          var receipt = await web3.eth.getTransactionReceipt(hash);
-          if (receipt != null) {
-            window.location.reload(false);
-            setClaimLoading(false);
-            break;
-          }
+    if (provider) {
+      setClaimLoading(true);
+      const web3 = new Web3(provider);
+      window.staking_contract = new web3.eth.Contract(
+        stakingabi,
+        staking_contract_address
+      );
+      await window.staking_contract.methods
+        .WithdrawTokens(address)
+        .send({ from: address })
+        .on("transactionHash", async (hash) => {
+          for (let index = 0; index > -1; index++) {
+            var receipt = await web3.eth.getTransactionReceipt(hash);
+            if (receipt != null) {
+              window.location.reload(false);
+              setClaimLoading(false);
+              break;
+            }
 
-        }
-      })
-      .on("error", (error) => {
-        toast("Something went wrong while Approving");
-        setClaimLoading(false);
-      });
+          }
+        })
+        .on("error", (error) => {
+          toast("Something went wrong while Approving");
+          setClaimLoading(false);
+        });
+    }
+  };
+  const claimReward = async () => {
+    if (provider) {
+      setClaimLoading(true);
+      const web3 = new Web3(provider);
+      window.staking_contract = new web3.eth.Contract(
+        stakingabi,
+        staking_contract_address
+      );
+      await window.staking_contract.methods
+        .ClaimRewards(address)
+        .send({ from: address })
+        .on("transactionHash", async (hash) => {
+          for (let index = 0; index > -1; index++) {
+            var receipt = await web3.eth.getTransactionReceipt(hash);
+            if (receipt != null) {
+              window.location.reload(false);
+              setClaimLoading(false);
+              break;
+            }
+
+          }
+        })
+        .on("error", (error) => {
+          toast("Something went wrong while Approving");
+          setClaimLoading(false);
+        });
+    }
   };
   const getCurrentReward = async () => {
 
     // const web3 = new Web3(provider);
-    const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+    const web3 = new Web3(provider);
     window.staking_contract = new web3.eth.Contract(
       stakingabi,
       staking_contract_address
@@ -86,14 +118,14 @@ const MyStake = () => {
     let currentReward = await window.staking_contract.methods.viewRewards(address).call();
 
 
-    setCurrentReward(currentReward)
+    setCurrentReward(Number(currentReward))
 
 
   };
   const getContractBalance = async () => {
 
     // const web3 = new Web3(provider);
-    const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+    const web3 = new Web3(provider);
     window.erc20_contract = new web3.eth.Contract(
       erc20abi,
       erc20_contract_address
@@ -102,9 +134,25 @@ const MyStake = () => {
     let contractCurrentBalance = await window.erc20_contract.methods.balanceOf(staking_contract_address).call();
 
 
-    console.log(contractCurrentBalance)
-    setContractCurrentBalance(contractCurrentBalance)
 
+    setContractCurrentBalance(Number(contractCurrentBalance))
+
+
+  };
+  const getRewardPenalty = async () => {
+
+    // const web3 = new Web3(provider);
+    const web3 = new Web3(provider);
+    window.staking_contract = new web3.eth.Contract(
+      stakingabi,
+      staking_contract_address
+    );
+
+    let rewardPenalty = await window.staking_contract.methods.getTaxPenalty().call();
+
+
+    console.log(rewardPenalty)
+    setRewardPenalty(rewardPenalty.pen)
 
   };
   useEffect(() => {
@@ -117,16 +165,25 @@ const MyStake = () => {
     getStakeDetails();
   }, [provider]);
   useEffect(() => {
-    getCurrentReward();
-
+    if (provider) {
+      getContractBalance();
+    }
   }, [provider]);
   useEffect(() => {
+    if (provider) {
+      getCurrentReward();
+    }
+  }, [provider]);
 
-    getContractBalance();
+  useEffect(() => {
+    if (provider) {
+      getRewardPenalty();
+    }
   }, [provider]);
   useEffect(() => {
-    // console.log(StakerDetails);
-  }, [StakerDetails]);
+    console.log(contractCurrentBalance);
+    console.log(currentReward);
+  }, [currentReward, contractCurrentBalance]);
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
       // Render a completed state
@@ -178,7 +235,9 @@ const MyStake = () => {
                 {/* <div className="right-side">Claimable Amount:</div> */}
               </div>
               <div className="timer">
-                <Countdown date={NewDate} renderer={renderer} />
+                <Countdown date={NewDate} renderer={renderer} onComplete={e => {
+                  setCountDownCompleted(true)
+                }} />
               </div>
               <div className="timer">
                 <div>
@@ -193,14 +252,26 @@ const MyStake = () => {
                   </Spinner>
                 </div>
               ) : (
-                contractCurrentBalance && contractCurrentBalance > 0 && contractCurrentBalance >= currentReward ? <button onClick={withdraw} className="btn btn-lg ">
-                  claim reward
-                </button> : <div className="timer">
-                  <div>
-                    <div> Claim Reward is not available right now. Please try again later!</div>
+                contractCurrentBalance > 0 && contractCurrentBalance >= currentReward ?
+                  <>
+                    {!countDownCompleted ? <button onClick={claimReward} className="btn btn-lg ">
+                      claim reward
+                    </button> : <></>}
+                    <button onClick={withdraw} className="btn btn-lg ">
+                      Unstake and Claim reward
+                    </button>
+                    {rewardPenalty && rewardPenalty > 0 ?
+                      <small>*Note: Unstaking before time will result in {rewardPenalty / 10}% penalty on reward
+                      </small>
+                      : <></>
+                    }
+                  </>
+                  : <div className="timer">
+                    <div>
+                      <div> Claim Reward is not available right now. Please try again later!</div>
 
+                    </div>
                   </div>
-                </div>
               )}
             </>
           ) : (

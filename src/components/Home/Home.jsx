@@ -636,9 +636,12 @@ const Home = () => {
                     </Spinner>
                   </>
                 ) : (
-                  <button className="btn btn-primary" onClick={stakeToken}>
-                    Stake
-                  </button>
+                  <>
+                    <button className="btn btn-primary" onClick={stakeToken}>
+                      Stake
+                    </button>
+                    
+                  </>
                 )
               ) : approveloading ? (
                 <>
@@ -652,9 +655,9 @@ const Home = () => {
                 </button>
               )}
 
-              <h6 className="balance" style={{ marginTop: "5px" }}>
+              {/* <h6 className="balance" style={{ marginTop: "5px" }}>
                 {"Reward: " + (currentReward / 1000000000000000000).toFixed(2) + " MTK"}
-              </h6>
+              </h6> */}
             </div>
           </div>
         </div >
