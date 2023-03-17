@@ -6,11 +6,13 @@ import erc20abi from "../../abis/ERC20.json";
 import stakingabi from "../../abis/staking.json";
 import { toast } from "react-toastify";
 import Spinner from "react-bootstrap/Spinner";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const erc20_contract_address = import.meta.env.VITE_ERC20;
 const staking_contract_address = import.meta.env.VITE_STAKING;
 
 const Home = () => {
+  const navigate = useNavigate()
   const { data: signer } = useSigner();
   const { address, connector, isConnected } = useAccount();
   const [provider, setProvider] = useState("");
@@ -35,7 +37,7 @@ const Home = () => {
         staking_contract_address
       );
       let staker = await window.contract.methods.Details(address).call();
-      // console.log(staker);
+
       setStakerDetails(staker);
       setLoadingState(false);
     }
@@ -96,10 +98,7 @@ const Home = () => {
       stakingabi,
       staking_contract_address
     );
-    console.log(address);
-    console.log(amount);
-    console.log(months);
-    console.log(amountKeepPercent);
+
 
     if (validation() == false) {
       setStakeLoading(true);
@@ -110,11 +109,12 @@ const Home = () => {
           for (let index = 0; index > -1; index++) {
             var receipt = await web3.eth.getTransactionReceipt(hash);
             if (receipt != null) {
+              navigate("/myStake")
               window.location.reload(false);
               setStakeLoading(false);
               break;
             }
-            console.log("hello");
+
           }
         })
         .on("error", (error) => {
@@ -144,7 +144,7 @@ const Home = () => {
     }
     setContractMonths(months);
     setLoadingState(false);
-    console.log("loading is false");
+
   };
 
   const approve = async () => {
@@ -167,7 +167,7 @@ const Home = () => {
 
               break;
             }
-            console.log("hello");
+
           }
         })
         .on("error", (error) => {
@@ -190,7 +190,7 @@ const Home = () => {
 
     setCurrentReward(currentReward)
     setLoadingState(false);
-    console.log("loading is false");
+
   };
 
 
@@ -210,13 +210,11 @@ const Home = () => {
   useEffect(() => {
     getCurrentReward();
   }, [provider]);
-  useEffect(() => {
-    console.log(ContractMonths);
-  }, [ContractMonths]);
 
   useEffect(() => {
-    console.log(loadingState);
-  }, [loadingState]);
+    console.log(ContractMonths)
+  }, [ContractMonths]);
+
 
   return (
     <div className="home-wrapper">
@@ -268,398 +266,401 @@ const Home = () => {
             <></>
           )}
 
-          <div className="radio-btn">
-            <div className="DurationRadios">
-              {StakerDetails.check ? (
-                // when there is already staked
-                <form>
-                  {ContractMonths[0]?.monthsSingle ==
-                    StakerDetails.StakeMonth ? (
-                    <div className="form-check">
-                      <label className="form-check-label">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio1"
-                          name="optradio"
-                          value={ContractMonths[0]?.monthsSingle}
-                          onChange={(e) => {
-                            setMonths(e.currentTarget.value);
-                          }}
-                        />
-                        {ContractMonths[0]?.monthsSingle}M -
-                        {ContractMonths[0]?.percentSingle}% APY
-                      </label>
-                    </div>
+          {ContractMonths && ContractMonths.length > 0 ? (
+            <>
+              <div className="radio-btn">
+                <div className="DurationRadios">
+                  {StakerDetails.check ? (
+                    // when there is already staked
+                    <form>
+                      {ContractMonths[0]?.monthsSingle ==
+                        StakerDetails.StakeMonth ? (
+                        <div className="form-check">
+                          <label className="form-check-label">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio1"
+                              name="optradio"
+                              value={ContractMonths[0]?.monthsSingle}
+                              onChange={(e) => {
+                                setMonths(e.currentTarget.value);
+                              }}
+                            />
+                            {ContractMonths[0]?.monthsSingle}M -
+                            {ContractMonths[0]?.percentSingle}% APY
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="form-check">
+                          <label className="form-check-label disabled">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio1"
+                              name="optradio"
+                              value={ContractMonths[0]?.monthsSingle}
+                              onChange={(e) => {
+                                setMonths(e.currentTarget.value);
+                              }}
+                              disabled
+                            />
+                            {ContractMonths[0]?.monthsSingle}M -
+                            {ContractMonths[0]?.percentSingle}% APY
+                          </label>
+                        </div>
+                      )}
+                      {ContractMonths[1]?.monthsSingle ==
+                        StakerDetails.StakeMonth ? (
+                        <div className="form-check">
+                          <label className="form-check-label">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio2"
+                              name="optradio"
+                              value={ContractMonths[1]?.monthsSingle}
+                              onChange={(e) => {
+                                setMonths(e.currentTarget.value);
+                              }}
+                            />
+                            {ContractMonths[1]?.monthsSingle}M -
+                            {ContractMonths[1]?.percentSingle}% APY
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="form-check">
+                          <label className="form-check-label disabled">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio2"
+                              name="optradio"
+                              value={ContractMonths[1]?.monthsSingle}
+                              onChange={(e) => {
+                                setMonths(e.currentTarget.value);
+                              }}
+                              disabled
+                            />
+                            {ContractMonths[1]?.monthsSingle}M -
+                            {ContractMonths[1]?.percentSingle}% APY
+                          </label>
+                        </div>
+                      )}
+
+                      {ContractMonths[2]?.monthsSingle ==
+                        StakerDetails.StakeMonth ? (
+                        <div className="form-check">
+                          <label className="form-check-label">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio3"
+                              name="optradio"
+                              value={ContractMonths[2]?.monthsSingle}
+                              onChange={(e) => {
+                                setMonths(e.currentTarget.value);
+                              }}
+                            />
+                            {ContractMonths[2]?.monthsSingle}M -
+                            {ContractMonths[2]?.percentSingle}% APY
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="form-check">
+                          <label className="form-check-label disabled">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio3"
+                              name="optradio"
+                              value={ContractMonths[2]?.monthsSingle}
+                              onChange={(e) => {
+                                setMonths(e.currentTarget.value);
+                              }}
+                              disabled
+                            />
+                            {ContractMonths[2]?.monthsSingle}M -
+                            {ContractMonths[2]?.percentSingle}% APY
+                          </label>
+                        </div>
+                      )}
+                    </form>
                   ) : (
-                    <div className="form-check">
-                      <label className="form-check-label disabled">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio1"
-                          name="optradio"
-                          value={ContractMonths[0]?.monthsSingle}
-                          onChange={(e) => {
-                            setMonths(e.currentTarget.value);
-                          }}
-                          disabled
-                        />
-                        {ContractMonths[0]?.monthsSingle}M -
-                        {ContractMonths[0]?.percentSingle}% APY
-                      </label>
-                    </div>
+                    // when no staked
+                    <form>
+                      <div className="form-check">
+                        <label className="form-check-label">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="radio1"
+                            name="optradio"
+                            value={ContractMonths[0]?.monthsSingle}
+                            onChange={(e) => {
+                              setMonths(e.currentTarget.value);
+                            }}
+                          />
+                          {ContractMonths[0]?.monthsSingle}M -
+                          {ContractMonths[0]?.percentSingle}% APY
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <label className="form-check-label">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="radio2"
+                            name="optradio"
+                            value={ContractMonths[1]?.monthsSingle}
+                            onChange={(e) => {
+                              setMonths(e.currentTarget.value);
+                            }}
+                          />
+                          {ContractMonths[1]?.monthsSingle}M -
+                          {ContractMonths[1]?.percentSingle}% APY
+                        </label>
+                      </div>
+
+                      <div className="form-check">
+                        <label className="form-check-label">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="radio3"
+                            name="optradio"
+                            value={ContractMonths[2]?.monthsSingle}
+                            onChange={(e) => {
+                              setMonths(e.currentTarget.value);
+                            }}
+                          />
+                          {ContractMonths[2]?.monthsSingle}M -
+                          {ContractMonths[2]?.percentSingle}% APY
+                        </label>
+                      </div>
+                    </form>
                   )}
-                  {ContractMonths[1]?.monthsSingle ==
-                    StakerDetails.StakeMonth ? (
-                    <div className="form-check">
-                      <label className="form-check-label">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio2"
-                          name="optradio"
-                          value={ContractMonths[1]?.monthsSingle}
-                          onChange={(e) => {
-                            setMonths(e.currentTarget.value);
-                          }}
-                        />
-                        {ContractMonths[1]?.monthsSingle}M -
-                        {ContractMonths[1]?.percentSingle}% APY
-                      </label>
-                    </div>
+                </div>
+
+                <div className="DurationRadioButtons">
+                  {StakerDetails.check ? (
+                    //staked
+                    <form>
+                      {StakerDetails.EarnPersentage == 100 ? (
+                        <div className="form-check">
+                          <label className="form-check-label">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio4"
+                              name="optradio"
+                              value="100"
+                              onChange={(e) => {
+                                setAmountKeepPercent(e.currentTarget.value);
+                              }}
+                            />
+                            100%
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="form-check">
+                          <label className="form-check-label disabled">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio4"
+                              name="optradio"
+                              value="100"
+                              onChange={(e) => {
+                                setAmountKeepPercent(e.currentTarget.value);
+                              }}
+                              disabled
+                            />
+                            100%
+                          </label>
+                        </div>
+                      )}
+
+                      {StakerDetails.EarnPersentage == 75 ? (
+                        <div className="form-check">
+                          <label className="form-check-label">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio5"
+                              name="optradio"
+                              value="75"
+                              onChange={(e) => {
+                                setAmountKeepPercent(e.currentTarget.value);
+                              }}
+                            />
+                            75%
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="form-check">
+                          <label className="form-check-label disabled">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio5"
+                              name="optradio"
+                              value="75"
+                              onChange={(e) => {
+                                setAmountKeepPercent(e.currentTarget.value);
+                              }}
+                              disabled
+                            />
+                            75%
+                          </label>
+                        </div>
+                      )}
+
+                      {StakerDetails.EarnPersentage == 50 ? (
+                        <div className="form-check">
+                          <label className="form-check-label">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio6"
+                              name="optradio"
+                              value="50"
+                              onChange={(e) => {
+                                setAmountKeepPercent(e.currentTarget.value);
+                              }}
+                            />
+                            50%
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="form-check">
+                          <label className="form-check-label disabled">
+                            <input
+                              type="radio"
+                              className="form-check-input"
+                              id="radio6"
+                              name="optradio"
+                              value="50"
+                              onChange={(e) => {
+                                setAmountKeepPercent(e.currentTarget.value);
+                              }}
+                              disabled
+                            />
+                            50%
+                          </label>
+                        </div>
+                      )}
+                    </form>
                   ) : (
-                    <div className="form-check">
-                      <label className="form-check-label disabled">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio2"
-                          name="optradio"
-                          value={ContractMonths[1]?.monthsSingle}
-                          onChange={(e) => {
-                            setMonths(e.currentTarget.value);
-                          }}
-                          disabled
-                        />
-                        {ContractMonths[1]?.monthsSingle}M -
-                        {ContractMonths[1]?.percentSingle}% APY
-                      </label>
-                    </div>
+                    //unstaked
+                    <form>
+                      <div className="form-check">
+                        <label className="form-check-label">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="radio4"
+                            name="optradio"
+                            value="100"
+                            onChange={(e) => {
+                              setAmountKeepPercent(e.currentTarget.value);
+                            }}
+                          />
+                          100%
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <label className="form-check-label">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="radio5"
+                            name="optradio"
+                            value="75"
+                            onChange={(e) => {
+                              setAmountKeepPercent(e.currentTarget.value);
+                            }}
+                          />
+                          75%
+                        </label>
+                      </div>
+
+                      <div className="form-check">
+                        <label className="form-check-label">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="radio6"
+                            name="optradio"
+                            value="50"
+                            onChange={(e) => {
+                              setAmountKeepPercent(e.currentTarget.value);
+                            }}
+                          />
+                          50%
+                        </label>
+                      </div>
+                    </form>
                   )}
-
-                  {ContractMonths[2]?.monthsSingle ==
-                    StakerDetails.StakeMonth ? (
-                    <div className="form-check">
-                      <label className="form-check-label">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio3"
-                          name="optradio"
-                          value={ContractMonths[2]?.monthsSingle}
-                          onChange={(e) => {
-                            setMonths(e.currentTarget.value);
-                          }}
-                        />
-                        {ContractMonths[2]?.monthsSingle}M -
-                        {ContractMonths[2]?.percentSingle}% APY
-                      </label>
-                    </div>
-                  ) : (
-                    <div className="form-check">
-                      <label className="form-check-label disabled">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio3"
-                          name="optradio"
-                          value={ContractMonths[2]?.monthsSingle}
-                          onChange={(e) => {
-                            setMonths(e.currentTarget.value);
-                          }}
-                          disabled
-                        />
-                        {ContractMonths[2]?.monthsSingle}M -
-                        {ContractMonths[2]?.percentSingle}% APY
-                      </label>
-                    </div>
-                  )}
-                </form>
-              ) : (
-                // when no staked
-                <form>
-                  <div className="form-check">
-                    <label className="form-check-label">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        id="radio1"
-                        name="optradio"
-                        value={ContractMonths[0]?.monthsSingle}
-                        onChange={(e) => {
-                          setMonths(e.currentTarget.value);
-                        }}
-                      />
-                      {ContractMonths[0]?.monthsSingle}M -
-                      {ContractMonths[0]?.percentSingle}% APY
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <label className="form-check-label">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        id="radio2"
-                        name="optradio"
-                        value={ContractMonths[1]?.monthsSingle}
-                        onChange={(e) => {
-                          setMonths(e.currentTarget.value);
-                        }}
-                      />
-                      {ContractMonths[1]?.monthsSingle}M -
-                      {ContractMonths[1]?.percentSingle}% APY
-                    </label>
-                  </div>
-
-                  <div className="form-check">
-                    <label className="form-check-label">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        id="radio3"
-                        name="optradio"
-                        value={ContractMonths[2]?.monthsSingle}
-                        onChange={(e) => {
-                          setMonths(e.currentTarget.value);
-                        }}
-                      />
-                      {ContractMonths[2]?.monthsSingle}M -
-                      {ContractMonths[2]?.percentSingle}% APY
-                    </label>
-                  </div>
-                </form>
-              )}
-            </div>
-
-            <div className="DurationRadioButtons">
-              {StakerDetails.check ? (
-                //staked
-                <form>
-                  {StakerDetails.EarnPersentage == 100 ? (
-                    <div className="form-check">
-                      <label className="form-check-label">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio4"
-                          name="optradio"
-                          value="100"
-                          onChange={(e) => {
-                            setAmountKeepPercent(e.currentTarget.value);
-                          }}
-                        />
-                        100%
-                      </label>
-                    </div>
-                  ) : (
-                    <div className="form-check">
-                      <label className="form-check-label disabled">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio4"
-                          name="optradio"
-                          value="100"
-                          onChange={(e) => {
-                            setAmountKeepPercent(e.currentTarget.value);
-                          }}
-                          disabled
-                        />
-                        100%
-                      </label>
-                    </div>
-                  )}
-
-                  {StakerDetails.EarnPersentage == 75 ? (
-                    <div className="form-check">
-                      <label className="form-check-label">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio5"
-                          name="optradio"
-                          value="75"
-                          onChange={(e) => {
-                            setAmountKeepPercent(e.currentTarget.value);
-                          }}
-                        />
-                        75%
-                      </label>
-                    </div>
-                  ) : (
-                    <div className="form-check">
-                      <label className="form-check-label disabled">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio5"
-                          name="optradio"
-                          value="75"
-                          onChange={(e) => {
-                            setAmountKeepPercent(e.currentTarget.value);
-                          }}
-                          disabled
-                        />
-                        75%
-                      </label>
-                    </div>
-                  )}
-
-                  {StakerDetails.EarnPersentage == 50 ? (
-                    <div className="form-check">
-                      <label className="form-check-label">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio6"
-                          name="optradio"
-                          value="50"
-                          onChange={(e) => {
-                            setAmountKeepPercent(e.currentTarget.value);
-                          }}
-                        />
-                        50%
-                      </label>
-                    </div>
-                  ) : (
-                    <div className="form-check">
-                      <label className="form-check-label disabled">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="radio6"
-                          name="optradio"
-                          value="50"
-                          onChange={(e) => {
-                            setAmountKeepPercent(e.currentTarget.value);
-                          }}
-                          disabled
-                        />
-                        50%
-                      </label>
-                    </div>
-                  )}
-                </form>
-              ) : (
-                //unstaked
-                <form>
-                  <div className="form-check">
-                    <label className="form-check-label">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        id="radio4"
-                        name="optradio"
-                        value="100"
-                        onChange={(e) => {
-                          setAmountKeepPercent(e.currentTarget.value);
-                        }}
-                      />
-                      100%
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <label className="form-check-label">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        id="radio5"
-                        name="optradio"
-                        value="75"
-                        onChange={(e) => {
-                          setAmountKeepPercent(e.currentTarget.value);
-                        }}
-                      />
-                      75%
-                    </label>
-                  </div>
-
-                  <div className="form-check">
-                    <label className="form-check-label">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        id="radio6"
-                        name="optradio"
-                        value="50"
-                        onChange={(e) => {
-                          setAmountKeepPercent(e.currentTarget.value);
-                        }}
-                      />
-                      50%
-                    </label>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-
-          <div className="input-fields">
-            <div className="EarningAmount">
-              <div className="mb-3">
-                <label className="form-label">Amount:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  // pattern="/[^0-9]/g"
-                  id="amount"
-                  // placeholder="Amount to Stake"
-                  // name="amount"
-                  value={amount}
-                  onChange={(e) => {
-                    console.log("else");
-
-                    const regex = /[^0-9]/g;
-                    const value = e.target.value;
-                    const newValue = value.replace(regex, "");
-                    setAmount(newValue);
-                  }}
-                />
+                </div>
               </div>
-              {balance == allowance ? (
 
-                stakeLoading ? (
-                  <>
-                    < Spinner animation="border" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                  </>
-                ) : (
-                  <>
-                    <button className="btn btn-primary" onClick={stakeToken}>
-                      Stake
+              <div className="input-fields">
+                <div className="EarningAmount">
+                  <div className="mb-3">
+                    <label className="form-label">Amount:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      // pattern="/[^0-9]/g"
+                      id="amount"
+                      // placeholder="Amount to Stake"
+                      // name="amount"
+                      value={amount}
+                      onChange={(e) => {
+
+
+                        const regex = /[^0-9]/g;
+                        const value = e.target.value;
+                        const newValue = value.replace(regex, "");
+                        setAmount(newValue);
+                      }}
+                    />
+                  </div>
+                  {balance == allowance ? (
+
+                    stakeLoading ? (
+                      <>
+                        < Spinner animation="border" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                      </>
+                    ) : (
+                      <>
+                        <button className="btn btn-primary" onClick={stakeToken}>
+                          Stake
+                        </button>
+
+                      </>
+                    )
+                  ) : approveloading ? (
+                    <>
+                      <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    </>
+                  ) : (
+                    <button className="btn btn-primary" onClick={approve}>
+                      Approve
                     </button>
-                    
-                  </>
-                )
-              ) : approveloading ? (
-                <>
-                  <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                </>
-              ) : (
-                <button className="btn btn-primary" onClick={approve}>
-                  Approve
-                </button>
-              )}
+                  )}
 
-              {/* <h6 className="balance" style={{ marginTop: "5px" }}>
+                  {/* <h6 className="balance" style={{ marginTop: "5px" }}>
                 {"Reward: " + (currentReward / 1000000000000000000).toFixed(2) + " MTK"}
               </h6> */}
-            </div>
-          </div>
+                </div>
+              </div>
+            </>) : <>Loading Staking Plan...</>}
         </div >
       )}
     </div >
