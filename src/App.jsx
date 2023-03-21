@@ -43,6 +43,29 @@ const bscTestnetChainCustom = {
   },
   testnet: true,
 };
+
+const bscMainnetChainCustom = {
+  id: 56,
+  name: "Binance Smart Chain",
+  network: "bsc",
+  iconUrl: "https://example.com/icon.svg",
+  iconBackground: "#fff",
+  nativeCurrency: {
+    decimals: 18,
+    name: "BNB",
+    symbol: "BNB",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://bsc-dataseed1.binance.org"],
+    },
+  },
+  blockExplorers: {
+    default: { name: "BscScan", url: "https://bscscan.com" },
+  },
+  testnet: false,
+};
+
 const { chains, provider } = configureChains(
   [bscTestnetChainCustom],
   [
