@@ -21,8 +21,30 @@ import {
 } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/react";
 
+//Custom BSC Network
+const bscTestnetChainCustom = {
+  id: 97,
+  name: "Binance Smart Chain Testnet",
+  network: "bsctestnet",
+  iconUrl: "https://example.com/icon.svg",
+  iconBackground: "#fff",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Binance Smart Chain Testnet BNB",
+    symbol: "tBNB",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://data-seed-prebsc-1-s1.binance.org:8545"],
+    },
+  },
+  blockExplorers: {
+    default: { name: "BscScan Testnet", url: "https://testnet.bscscan.com" },
+  },
+  testnet: true,
+};
 const { chains, provider } = configureChains(
-  [bscTestnet],
+  [bscTestnetChainCustom],
   [
     alchemyProvider({ apiKey: "WHmpEswo53EENhh4OBXcQIq2I0ob7x_-" }),
     publicProvider(),
