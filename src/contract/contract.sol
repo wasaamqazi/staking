@@ -27,6 +27,7 @@ contract TokenStaking is Ownable {
     mapping(uint256 => uint256) public APYPer;
     mapping(address => uint256) public Tokens;
     mapping(address => uint256) public RewardAmount;
+    mapping(address => uint256) public BurnAmount;
 
     /*
     ~~~~~~~~~~~~~~~Constructor function~~~~~~~~~~~~~~~
@@ -66,9 +67,9 @@ contract TokenStaking is Ownable {
         uint256 EarnPersentage
     ) public {
         require(Tokens[ownerAddress] > 0, "Please Wait !!!");
-        uint256 _amount = _payment * 1000000000000000000;
+        uint256 _amount = _payment * 1000000000;
         if (Details[to].check) {
-            require(((Details[to].StakeMonth * 30 * 24 * 60 * 60) + Details[to].stakeTime) >block.timestamp,"Your Time Period Complete.");
+            require(((Details[to].StakeMonth * 10 * 60) + Details[to].stakeTime) >block.timestamp,"Your Time Period Complete.");
             require(
                 Details[to].StakeMonth == StakeMonth,
                 "Enter Right StakeMonth"
@@ -129,7 +130,7 @@ contract TokenStaking is Ownable {
         uint256 EarnToken;
         uint256 BurnToken;
         if (
-            ((Details[to].StakeMonth * 30 * 24 * 60 * 60) + Details[to].stakeTime) < block.timestamp) {
+            ((Details[to].StakeMonth * 10 * 60) + Details[to].stakeTime) < block.timestamp) {
             if (Details[to].EarnPersentage == 100) {
                 IERC20(ERC20Address).transfer(
                     to,
@@ -147,6 +148,7 @@ contract TokenStaking is Ownable {
                 BurnToken =
                     ((InterestAmount[to] - RewardAmount[to]) * 25) /
                     100;
+                BurnAmount[to] = BurnToken;
                 IERC20(ERC20Address).transfer(
                     0x000000000000000000000000000000000000dEaD,
                     BurnToken
@@ -162,6 +164,7 @@ contract TokenStaking is Ownable {
                 BurnToken =
                     ((InterestAmount[to] - RewardAmount[to]) * 50) /
                     100;
+                BurnAmount[to] = BurnToken;
                 IERC20(ERC20Address).transfer(
                     0x000000000000000000000000000000000000dEaD,
                     BurnToken
@@ -171,10 +174,10 @@ contract TokenStaking is Ownable {
             uint256 InterestAmountperday;
             uint256 Total;
             uint256 PenaltyResult;
-            uint256 Stakdays = (block.timestamp - Details[to].stakeTime) / (24 * 60 * 60);
+            uint256 Stakdays = (block.timestamp - Details[to].stakeTime) / (60);
             InterestAmountperday =
                 InterestAmount[to] /
-                (Details[to].StakeMonth * 30);
+                (Details[to].StakeMonth * 10);
 
             //Transfer reward to user 100%
             if (Details[to].EarnPersentage == 100) {
@@ -202,6 +205,7 @@ contract TokenStaking is Ownable {
                     0x000000000000000000000000000000000000dEaD,
                     BurnToken
                 );
+                BurnAmount[to] = BurnToken;
             }
             //Transfer reward to user 50% and Burn 50%
             else if (Details[to].EarnPersentage == 50) {
@@ -220,6 +224,7 @@ contract TokenStaking is Ownable {
                     0x000000000000000000000000000000000000dEaD,
                     BurnToken
                 );
+                BurnAmount[to] = BurnToken;
             }
         }
         Details[to].check = false;
@@ -235,13 +240,13 @@ contract TokenStaking is Ownable {
     */
     function ClaimRewards(address to) public {
         require(
-            ((Details[to].StakeMonth * 30 * 24 * 60 * 60) + Details[to].stakeTime) >
+            ((Details[to].StakeMonth * 10 * 60) + Details[to].stakeTime) >
                 block.timestamp,
             "Your Stake Time Complete, Please Call Withdraw Function !"
         );
-        uint256 Stakdays = (block.timestamp - Details[to].stakeTime) / (24 * 60 * 60);
+        uint256 Stakdays = (block.timestamp - Details[to].stakeTime) / (60);
         uint256 InterestAmountperday = InterestAmount[to] /
-            (Details[to].StakeMonth * 30);
+            (Details[to].StakeMonth * 10);
         uint256 EarnToken = InterestAmountperday * Stakdays;
         require(EarnToken > 0, "Reward must be greater than zero.");
         RewardAmount[to] += EarnToken - RewardAmount[to];
@@ -251,14 +256,14 @@ contract TokenStaking is Ownable {
 
     function viewRewards(address to) public view returns (uint256 reward) {
         if (
-            ((Details[to].StakeMonth * 30 * 24 * 60 * 60) + Details[to].stakeTime) <
+            ((Details[to].StakeMonth * 10 * 60) + Details[to].stakeTime) <
             block.timestamp
         ) {
             return (InterestAmount[to]);
         } else {
-            uint256 Stakdays = (block.timestamp - Details[to].stakeTime) / (24 * 60 * 60);
+            uint256 Stakdays = (block.timestamp - Details[to].stakeTime) / (60);
             uint256 InterestAmountperday = InterestAmount[to] /
-                (Details[to].StakeMonth * 30);
+                (Details[to].StakeMonth * 10);
             uint256 EarnToken = (InterestAmountperday * Stakdays) -
                 RewardAmount[to];
             return (EarnToken);

@@ -37,7 +37,7 @@ const Home = () => {
         staking_contract_address
       );
       let staker = await window.contract.methods.Details(address).call();
-
+console.log(staker)
       setStakerDetails(staker);
       setLoadingState(false);
     }
@@ -57,6 +57,7 @@ const Home = () => {
         .allowance(address, staking_contract_address)
         .call();
       setBalance(balanceToken);
+      
       setAllowance(Allowance);
       setLoadingState(false);
     }
@@ -228,11 +229,11 @@ const Home = () => {
         <div className="home-content">
           <h1>Welcome to Staking</h1>
           <h6 className="balance">
-            {"Balance: " + (balance / 1000000000000000000).toFixed(2) + " MTK"}
+            {"Balance: " + (balance / 1000000000).toFixed(2) + " MTK"}
           </h6>
           <h6 className="allownace">
             {"Approved Amount: " +
-              (allowance / 1000000000000000000).toFixed(2) +
+              (allowance / 1000000000).toFixed(2) +
               " MTK"}
           </h6>
           {/* {balance == allowance ? (
@@ -252,7 +253,7 @@ const Home = () => {
             <>
               <p className="alreadyStakedNotice">
                 <span>You have staked </span>
-                {StakerDetails.depositTokens / 1000000000000000000}{" "}
+                {StakerDetails.depositTokens / 1000000000}{" "}
                 <span>MTK in </span>
                 {StakerDetails.StakeMonth} <span> month with </span>
                 {StakerDetails.EarnPersentage}%

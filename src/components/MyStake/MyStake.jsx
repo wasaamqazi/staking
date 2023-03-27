@@ -26,6 +26,7 @@ const MyStake = () => {
   const [rewardPenalty, setRewardPenalty] = useState("");
   const [collectedReward, setCollectedReward] = useState("");
   const [estimatedTotalReward, setEstimatedTotalReward] = useState("");
+  const [burnedAmount, setBurnedAmount] = useState("");
 
   const getStakeDetails = async () => {
     if (provider) {
@@ -40,10 +41,17 @@ const MyStake = () => {
 
       const date = moment(staker.stakeTime);
 
+      //This is for testing
       const newDate = moment(staker.stakeTime * 1000).add(
-        staker.StakeMonth * 30,
+        staker.StakeMonth * 10,
         "minutes"
       );
+
+      //This is for final for production
+      // const newDate = moment(staker.stakeTime * 1000).add(
+      //   staker.StakeMonth * 30,
+      //   "minutes"
+      // );
 
       setNewDate(newDate);
       setStakerDetails(staker);
@@ -163,6 +171,19 @@ const MyStake = () => {
     let estimatedTotalReward = await window.staking_contract.methods.InterestAmount(address).call();
     setEstimatedTotalReward(estimatedTotalReward)
   };
+
+  //Get Burned Amount from staking contract
+  const getBurnedAmount = async () => {
+    // const web3 = new Web3(provider);
+    const web3 = new Web3(provider);
+    window.staking_contract = new web3.eth.Contract(
+      stakingabi,
+      staking_contract_address
+    );
+    let burnedAmount = await window.staking_contract.methods.viewBurnRewards(address).call();
+    console.log(burnedAmount)
+    setBurnedAmount(burnedAmount)
+  };
   useEffect(() => {
     if (signer) {
       setProvider((signer?.provider).provider);
@@ -198,6 +219,11 @@ const MyStake = () => {
       getEstimatedTotalReward();
     }
   }, [provider]);
+  useEffect(() => {
+    if (provider) {
+      getBurnedAmount();
+    }
+  }, [provider]);
 
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -230,7 +256,12 @@ const MyStake = () => {
                 <div className="mobile-responsive">
                   <div className="left-side">
                     Your Stake:{" "}
-                    {StakerDetails.depositTokens / 1000000000000000000}
+
+                    {/* For Testing */}
+                    {StakerDetails.depositTokens / 1000000000}
+
+                    {/* For Final Production */}
+                    {/* {StakerDetails.depositTokens / 1000000000000000000} */}
                   </div>
                   <div className="left-side">
                     Your EarnPercentage: {StakerDetails.EarnPersentage}
@@ -239,11 +270,15 @@ const MyStake = () => {
                     Your StakeMonth: {StakerDetails.StakeMonth}
                   </div>
                   <div className="left-side">
-                    Reward Claimed: {` `} {(collectedReward / 1000000000000000000).toFixed(2)}   MTK
+                    Reward Claimed: {` `} {(collectedReward / 1000000000).toFixed(2)}   MTK
                   </div>
                   <div className="left-side">
-                    Total Estimated Reward: {` `} {(estimatedTotalReward / 1000000000000000000).toFixed(2)}   MTK
+                    Total Estimated Reward: {` `} {(estimatedTotalReward / 1000000000).toFixed(2)}   MTK
                   </div>
+                  <div className="left-side">
+                    Burned Amount: {` `} {(burnedAmount / 1000000000).toFixed(2)}   MTK
+                  </div>
+
                   <div className="left-side">
                     Your Stake Date and Time:{" "}
                     {moment(StakerDetails.stakeTime * 1000).format(
@@ -262,7 +297,7 @@ const MyStake = () => {
               </div>
               <div className="timer">
                 <div>
-                  <div>  Rewards: {` `} {(currentReward / 1000000000000000000).toFixed(2)}   MTK  </div>
+                  <div>  Rewards: {` `} {(currentReward / 1000000000).toFixed(2)}   MTK  </div>
 
                 </div>
               </div>
